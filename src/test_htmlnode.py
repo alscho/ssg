@@ -37,9 +37,11 @@ class TestLeafNode(unittest.TestCase):
         node2 = LeafNode(None, "this is raw text")
         node3 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
         node4 = LeafNode("p", None)
+        node5 = LeafNode("img", "", {"src": "https://commons.wikimedia.org/wiki/File:Honeycrisp.jpg", "alt": "an apple"})
         self.assertEqual(node1.to_html(), "<b>bold test</b>")
         self.assertEqual(node2.to_html(), "this is raw text")
         self.assertEqual(node3.to_html(), '<a href="https://www.google.com">Click me!</a>')
+        self.assertEqual(node5.to_html(), '<img src="https://commons.wikimedia.org/wiki/File:Honeycrisp.jpg" alt="an apple">')
         with self.assertRaises(ValueError):
             node4.to_html()       
 
