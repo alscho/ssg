@@ -41,6 +41,8 @@ class TextNode:
             case _:
                 raise Exception("no valid text type")
 
+    def get_text_and_texttype(self):
+        return (self.text, self.text_type)
 
     def __init__(self, text, text_type, url = None):
         self.text = text
