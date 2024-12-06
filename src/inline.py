@@ -1,36 +1,44 @@
 from textnode import TextNode, TextType
 
-def split_nodes_delimiter(old_notes, delimiter, text_type):
+### works on list of text LINES
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
-    for note in old_notes:
-        if delimiter in note.text and note.text_type == TextType.NORMAL:
-            new_text = ""
-            prev_delimiter = False
-            for i in range(0, len(note)):
-                c = note[i]
-                if c == delimiter and not prev_delimiter and len(new_text):
-                    new_node = TextNode(new_text, TextType.NORMAL)
-                    new_nodes.append(new_node)
-                    new_text = ""
-                    prev_delimiter = True
-                elif c == delimiter and prev_delimiter:
-                    new_node = TextNode(new_text, text_type)
-                    new_nodes.append(new_node)
-                    new_text = ""
-                    prev_delimiter = False
-                elif i == len(note) - 1 and len(new_text):
-                    if prev_delimiter == True:
-                        raise Exception(f"invalid markdown syntax: closing '{delimiter}' missing")
-                    new_node = TextNode(new_text+c, TextType.NORMAL)
-                    new_nodes.append(new_node)
-                    #new_text = ""
-                    prev_delimiter = False
-                else:
-                    new_text += c
-        else:
-            new_nodes.append(note)
+    for old_node in old_nodes:
+        
+        ### skips entirely empty entries, same effect as adding empty text_type.NORMAL
+        if old_node.text == "":
+            continue
+        ### not NORMAL texts won't be further processed
+        if old_node.text_type != TextType.NORMAL:
+            new_nodes.append(old_node)
+            continue
+        ### checks if old_note is an unordered list item
+        if old_node.text[0] == "*" and old_node.text.count("*") == 1:
+            new_nodes.append(old_node)
+            continue
+        ### checks if closing delimiter is missing
+        if old_node.text.count(delimiter) % 2 == 1:
+            raise Exception(f"invalid markdown syntax: uneven amount of {delimiter}, maybe close it?")
+            continue
+
+        ### valid texts to process regularly
+        texts = old_node.text.split(f"{delimiter}")
+        
+        for text in texts:
+            ### type 0: empty texts get thrown out
+            if text == "":
+                continue
+            ### type 1: enclosed in delimiter --> text_type
+            if f"{delimiter}{text}{delimiter}" in old_node.text:
+                new_node = TextNode(text, text_type)
+                new_nodes.append(new_node)
+            ### type 2: raw text --> TextType.NORMAL
+            else:
+                new_node = TextNode(text, TextType.NORMAL)
+                new_nodes.append(new_node)
     return new_nodes
 
+    
 def get_texts_and_texttypes(text_nodes):
     attributes = []
     for node in text_nodes:
