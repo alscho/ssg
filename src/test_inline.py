@@ -1,10 +1,30 @@
 import unittest
 
-from inline import split_nodes_delimiter, split_nodes_images, get_texts_and_texttypes, get_texts_and_texttypes_and_urls, extract_markdown_images, extract_markdown_links
+from inline import split_nodes_delimiter, split_nodes_images, split_nodes_links, get_texts_and_texttypes, get_texts_and_texttypes_and_urls, extract_markdown_images, extract_markdown_links
 
 from textnode import TextNode, TextType
 
 class TestInline(unittest.TestCase):
+    def test_split_nodes_link(self):
+        tests = [
+            [
+                ["This is text with a [rick roll](https://i.imgur.com/aKaOqIh.gif) and that's it.", TextType.NORMAL], [("This is text with a ", TextType.NORMAL, None), ("rick roll", TextType.LINK, "https://i.imgur.com/aKaOqIh.gif"), (" and that's it.", TextType.NORMAL, None)],
+            ["[rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.NORMAL], [("rick roll", TextType.LINK, "https://i.imgur.com/aKaOqIh.gif")],
+            ["", TextType.NORMAL], [],
+            ["There is no link.", TextType.NORMAL], [("There is no link.", TextType.NORMAL, "")],
+            ["[rick roll](https://i.imgur.com/aKaOqIh.gif)[obi wan](https://i.imgur.com/fJRm4Vk.jpeg)]"], [("rick roll", TextType.LINK, "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", TextType.LINK, "https://i.imgur.com/fJRm4Vk.jpeg")],
+            ["[rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.BOLD], [("[rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.BOLD, "")],
+            ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL], [("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL, None)],
+            ["[]()", TextType.NORMAL], [("", TextType.LINK, "")]
+
+        ]
+        ]
+
+        for i in range(0, len(tests)):
+            text_node = TextNode(tests[i][0][0], tests[i][0][1])
+            old_nodes = [text_node]
+            self.assertEqual(get_texts_and_texttypes_and_urls(split_nodes_links(old_nodes)), tests[i][1])
+    
     def test_split_nodes_image(self):
         tests = [
             [

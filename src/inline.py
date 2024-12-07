@@ -28,27 +28,68 @@ def extract_markdown_images(text):
         images.append((alt, src))
     return images
 
-def split_nodes_images(old_nodes):
+def split_nodes_links(old_nodes):
     new_nodes = []
     for old_node in old_nodes:
+        ### don't extract out of other types
         if old_node.text_type != TextType.NORMAL:
             new_nodes.append(old_node)
             continue
         raw_text = [old_node.text]
-        #print(f"1. raw_text: {raw_text}")
+        links = extract_markdown_links(raw_text[0])
+        ### no links in the node
+        if len(links) == 0:
+            new_nodes.append(old_node)
+            continue
+        
+        ### repeat until all links have been dealt with
+        while len(links) > 0:
+            ### updates links list for next iteration
+            lk = links.pop(0)
+            link = f"[{lk[0]}]({lk[1]})"
+            ### first element is a text node, second element is the rest of the old_node - to be processed next iteration
+            raw_text = raw_text[0].split(link)
+            ### raw_text contains leftover string for next iteration 
+            node_text = raw_text.pop(0)
+            ### removes implicitly all empty NORMAL nodes which .split() produces
+            if node_text != "":
+                new_node = TextNode(node_text, TextType.NORMAL)
+                new_nodes.append(new_node)
+            alt, src = lk
+            new_node = TextNode(alt, TextType.LINK, src)
+            new_nodes.append(new_node)
+
+        ### last bit of string gets added (or omitted if empty)
+        node_text = raw_text.pop(0)
+        if node_text != "":
+            new_node = TextNode(node_text, TextType.NORMAL)
+            new_nodes.append(new_node)
+    return new_nodes
+
+def split_nodes_images(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        ### don't extract out of other types
+        if old_node.text_type != TextType.NORMAL:
+            new_nodes.append(old_node)
+            continue
+        raw_text = [old_node.text]
         images = extract_markdown_images(raw_text[0])
-        #print(f"2. images: {images}")
+        ### no images in the node
         if len(images) == 0:
             new_nodes.append(old_node)
             continue
-
+        
+        ### repeat until all images have been dealt with
         while len(images) > 0:
+            ### updates images list for next iteration
             img = images.pop(0)
             image = f"![{img[0]}]({img[1]})"
-            #print(f"3, image: {image}")
-            #print(f"4. raw_text: {raw_text[0]}")
+            ### first element is a text node, second element is the rest of the old_node - to be processed next iteration
             raw_text = raw_text[0].split(image)
+            ### raw_text contains leftover string for next iteration 
             node_text = raw_text.pop(0)
+            ### removes implicitly all empty NORMAL nodes which .split() produces
             if node_text != "":
                 new_node = TextNode(node_text, TextType.NORMAL)
                 new_nodes.append(new_node)
@@ -56,11 +97,11 @@ def split_nodes_images(old_nodes):
             new_node = TextNode(alt, TextType.IMAGE, src)
             new_nodes.append(new_node)
 
+        ### last bit of string gets added (or omitted if empty)
         node_text = raw_text.pop(0)
         if node_text != "":
             new_node = TextNode(node_text, TextType.NORMAL)
             new_nodes.append(new_node)
-    #print(new_nodes)
     return new_nodes
 
 
