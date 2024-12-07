@@ -28,6 +28,20 @@ def extract_markdown_images(text):
         images.append((alt, src))
     return images
 
+def text_to_textnodes(text):
+    types = {
+        "**": TextType.BOLD,
+        "*": TextType.ITALIC,
+        "`": TextType.CODE
+        }
+    node = TextNode(text, TextType.NORMAL)
+    nodes = [node]
+    nodes = split_nodes_images(nodes)
+    nodes = split_nodes_links(nodes)
+    for delimiter in types:
+        nodes = split_nodes_delimiter(nodes, delimiter, types[delimiter])
+    return nodes
+
 def split_nodes_links(old_nodes):
     new_nodes = []
     for old_node in old_nodes:

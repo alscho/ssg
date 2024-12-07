@@ -1,10 +1,25 @@
 import unittest
 
-from inline import split_nodes_delimiter, split_nodes_images, split_nodes_links, get_texts_and_texttypes, get_texts_and_texttypes_and_urls, extract_markdown_images, extract_markdown_links
+from inline import text_to_textnodes, split_nodes_delimiter, split_nodes_images, split_nodes_links, get_texts_and_texttypes, get_texts_and_texttypes_and_urls, extract_markdown_images, extract_markdown_links
 
 from textnode import TextNode, TextType
 
 class TestInline(unittest.TestCase):
+    def test_text_to_textnodes(self):
+        tests = [
+            [
+                
+                "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)", [("This is ", TextType.NORMAL, None), ("text", TextType.BOLD, None), (" with an ", TextType.NORMAL, None), ("italic", TextType.ITALIC, None), (" word and a ", TextType.NORMAL, None), ("code block", TextType.CODE, None), (" and an ", TextType.NORMAL, None), ("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), (" and a ", TextType.NORMAL, None), ("link", TextType.LINK, "https://boot.dev")]
+                    
+
+            ]
+        ]
+        for i in range(0, len(tests)):
+            self.assertEqual(get_texts_and_texttypes_and_urls(text_to_textnodes(tests[i][0])), tests[i][1])
+
+
+    
+    
     def test_split_nodes_link(self):
         tests = [
             [
@@ -17,7 +32,7 @@ class TestInline(unittest.TestCase):
             ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL], [("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL, None)],
             ["[]()", TextType.NORMAL], [("", TextType.LINK, "")]
 
-        ]
+            ]
         ]
 
         for i in range(0, len(tests)):
