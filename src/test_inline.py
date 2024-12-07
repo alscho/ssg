@@ -1,13 +1,56 @@
 import unittest
 
-from inline import split_nodes_delimiter, get_texts_and_texttypes
+from inline import split_nodes_delimiter, split_nodes_images, get_texts_and_texttypes, get_texts_and_texttypes_and_urls, extract_markdown_images, extract_markdown_links
 
 from textnode import TextNode, TextType
 
 class TestInline(unittest.TestCase):
+    def test_split_nodes_image(self):
+        tests = [
+            [
+                ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and that's it.", TextType.NORMAL], [("This is text with a ", TextType.NORMAL, None), ("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"), (" and that's it.", TextType.NORMAL, None)],
+            ["![rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.NORMAL], [("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif")],
+            ["", TextType.NORMAL], [],
+            ["There is no link.", TextType.NORMAL], [("There is no link.", TextType.NORMAL, "")],
+            ["![rick roll](https://i.imgur.com/aKaOqIh.gif)![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)]"], [("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg")],
+            ["![rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.BOLD], [("![rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.BOLD, "")],
+            ["This is text with a [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL], [("This is text with a [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL, None)],
+            ["![]()", TextType.NORMAL], [("", TextType.IMAGE, "")]
+
+        ]
+        ]
+
+        for i in range(0, len(tests)):
+            text_node = TextNode(tests[i][0][0], tests[i][0][1])
+            old_nodes = [text_node]
+            self.assertEqual(get_texts_and_texttypes_and_urls(split_nodes_images(old_nodes)), tests[i][1])
+
+
+    def test_extract_markdown_links(self):
+        tests = [
+            ["This is text with a [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]],
+            ["This is text with a [](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", [("", "https://i.imgur.com/aKaOqIh.gif")]],
+            ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan]()", [("obi wan", "")]],
+            ["This is text with a []() and ![]()", [("", "")]],
+            ["No images.", []]
+        ]
+
+        for i in range(0, len(tests)):
+            self.assertEqual(extract_markdown_links(tests[i][0]), tests[i][1])
+
+    def test_extract_markdown_images(self):
+        tests = [
+            ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]],
+            ["This is text with a ![](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", [("", "https://i.imgur.com/aKaOqIh.gif")]],
+            ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan]()", [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "")]],
+            ["This is text with a ![]() and ![]()", [("", ""), ("", "")]],
+            ["No images.", []]
+        ]
+
+        for i in range(0, len(tests)):
+            self.assertEqual(extract_markdown_images(tests[i][0]), tests[i][1])
+
     def test_split_notes_delimiter(self):
-
-
 
         node1 = TextNode("", TextType.NORMAL)
         node2 = TextNode("This is just raw text.", TextType.NORMAL)
