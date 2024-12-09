@@ -13,6 +13,16 @@ def markdown_to_html_node(markdown):
     div_node = ParentNode("div", block_nodes)
     return div_node
 
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == "heading":
+            header_type = get_header_type(block)
+            if header_type == "h1":
+                return get_header_text(block)
+    raise Exception("no title (header 1 in md syntax) found")
+
 def text_to_children(text):
     leaf_nodes = []
     text_nodes = text_to_textnodes(text)

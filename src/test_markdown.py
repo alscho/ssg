@@ -1,9 +1,29 @@
 import unittest
 
-from markdown import get_header_type, list_block_to_block_nodes, markdown_to_html_node, text_to_children, block_to_block_node
+from markdown import get_header_type, list_block_to_block_nodes, markdown_to_html_node, text_to_children, block_to_block_node, extract_title
 from htmlnode import LeafNode, ParentNode, HTMLNode
 
 class TestMarkdown(unittest.TestCase):
+    def test_extract_title(self):
+        tests_eq = [
+            ["# title", "title"],
+            ["# title2\n\nThis is a paragraph\n", "title2"],
+            ["# title3\n\n## not a title\n### still not a title", "title3"]
+        ]
+
+        tests_raise = [
+            ["", "## no title", "paragraph\n\n```code```\n\n### not a title"]
+        ]
+
+        for i in range(0, len(tests_eq)):
+            self.assertEqual(extract_title(tests_eq[i][0]), tests_eq[i][1])
+        
+        with self.assertRaises(Exception):
+            for j in range(0, len(tests_raise)):
+                extract_title(tests_raise[j])
+
+        
+
     def test_get_header_type(self):
         tests = [
             ["# header", "h1"],
