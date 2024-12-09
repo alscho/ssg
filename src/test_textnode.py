@@ -22,8 +22,8 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node, node3)
 
     def test_text_node_to_html_node(self):
-        #empty_node_wot = TextNode("", None)
-        #empty_node_wt = TextNode("", TextType.BOLD)
+        empty_node_wot = TextNode("", None)
+        empty_node_wt = TextNode("", TextType.BOLD)
         n_node = TextNode("normal", TextType.NORMAL)
         b_node = TextNode("bold", TextType.BOLD)
         i_node = TextNode("italic", TextType.ITALIC)
@@ -35,7 +35,7 @@ class TestTextNode(unittest.TestCase):
         f_node_wol = TextNode("nothing", TextType.IMAGE, "")
         f_node_wn = TextNode("nothing", TextType.IMAGE)
         
-        #self.assertEqual(empty_node_wt.text_node_to_html_node().to_html() , "<b></b>")
+        self.assertEqual(empty_node_wt.text_node_to_html_node().to_html() , "<b></b>")
         self.assertEqual(n_node.text_node_to_html_node().to_html(), "normal")
         self.assertEqual(b_node.text_node_to_html_node().to_html(), "<b>bold</b>")
         self.assertEqual(i_node.text_node_to_html_node().to_html(), "<i>italic</i>")
@@ -47,8 +47,8 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(f_node_wol.text_node_to_html_node().to_html(), '<img src="" alt="nothing">')
         self.assertEqual(f_node_wn.text_node_to_html_node().to_html(), '<img src="" alt="nothing">')
 
-        #with self.assertRaises(Exception):
-        #    empty_node_wot.text_node_to_html_node()
+        with self.assertRaises(Exception):
+            empty_node_wot.text_node_to_html_node()
 
 
 if __name__ == "__main__":
