@@ -67,10 +67,12 @@ def block_to_block_node(block, block_type):
             leaf_nodes = text_to_children(header_content)
             return ParentNode(header_type, leaf_nodes)
         case ("code"):
+            ### misnomer it stips the string up until the first space (inclusive) from the left
             leaf_nodes = text_to_children(block)
             return ParentNode("code", leaf_nodes)
         case ("quote"):
-            leaf_nodes = text_to_children(block)
+            text = get_header_text(block)
+            leaf_nodes = text_to_children(text)
             return ParentNode("blockquote", leaf_nodes)
         case ("unordered_list"):
             return list_block_to_block_nodes(block, "ul")

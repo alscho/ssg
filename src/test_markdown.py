@@ -63,11 +63,12 @@ class TestMarkdown(unittest.TestCase):
             [("##### headR", "heading"), "<h5>headR</h5>"],
             [("just some text", "paragraph"), "<p>just some text</p>"],
             [("some code", "code"), "<code>some code</code>"],
-            [("nice quote", "quote"), "<blockquote>nice quote</blockquote>"],
+            [("> nice quote", "quote"), "<blockquote>nice quote</blockquote>"],
             [("* item1\n* item2", "unordered_list"), "<ul><li>item1</li><li>item2</li></ul>"],
             [("1. item1\n2. item2", "ordered_list"), "<ol><li>item1</li><li>item2</li></ol>"],
             [("some code with **bold** and *italic*", "code"), "<code>some code with <b>bold</b> and <i>italic</i></code>"],
-            [("text", "paragraph"), "<p>text</p>"]
+            [("text", "paragraph"), "<p>text</p>"],
+            [("> this is quote", "quote"), "<blockquote>this is quote</blockquote>"]
 
         ]
         for i in range(0, len(tests)):
