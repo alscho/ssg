@@ -15,7 +15,7 @@ def block_to_block_type(block):
         line = lines[i]
         if len(line) < 2 or line[0:2] != "> ":
             is_quote = False
-        if len(line) < 2 or line[0:2] != "* ":
+        if len(line) < 2 or (line[0:2] != "* " and line[0:2] != "- "):
             is_unordered_list = False
         if len(line) < 3 or line[0:3] != f"{i+1}. ":
             is_ordered_list = False

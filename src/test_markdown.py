@@ -50,6 +50,7 @@ class TestMarkdown(unittest.TestCase):
 
     def test_list_block_to_block_nodes(self):
         tests = [
+            [("- item1\n- item2", "ul"), "<ul><li>item1</li><li>item2</li></ul>"],
             [("* item1\n* item2", "ul"), "<ul><li>item1</li><li>item2</li></ul>"],
             [("1. bla", "ol"), "<ol><li>bla</li></ol>"],
             [("1. bla\n2. blabla\n3. blablabla", "ol"), "<ol><li>bla</li><li>blabla</li><li>blablabla</li></ol>"]

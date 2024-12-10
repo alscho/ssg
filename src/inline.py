@@ -139,22 +139,18 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if old_node.text.count(delimiter) % 2 == 1:
             raise Exception(f"invalid markdown syntax: uneven amount of {delimiter}, maybe close it?")
             continue
-
-        ### valid texts to process regularly
-        texts = old_node.text.split(f"{delimiter}")
         
-        for text in texts:
-            ### type 0: empty texts get thrown out
+        texts = old_node.text.split(delimiter)
+        for i in range(0, len(texts)):
+            text = texts[i]
             if text == "":
                 continue
-            ### type 1: enclosed in delimiter --> text_type
-            if f"{delimiter}{text}{delimiter}" in old_node.text:
-                new_node = TextNode(text, text_type)
-                new_nodes.append(new_node)
-            ### type 2: raw text --> TextType.NORMAL
-            else:
+            if i % 2 == 0:
                 new_node = TextNode(text, TextType.NORMAL)
-                new_nodes.append(new_node)
+            else:
+                new_node = TextNode(text, text_type)
+            new_nodes.append(new_node)
+                            
     return new_nodes
 
 def get_texts_and_texttypes_and_urls(text_nodes):
