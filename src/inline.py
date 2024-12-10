@@ -4,11 +4,13 @@ from textnode import TextNode, TextType
 
 def extract_markdown_links(text):
     links = []
-    to_process = re.findall(r"[^\!]\[.*?\]\(.*?\)", text)
+    ### problem when there is no character in front of the link syntax
+    #to_process = re.findall(r"[^\!]\[.*?\]\(.*?\)", text)
+    to_process = re.findall(r"(?<!!)\[.*?\]\(.*?\)", text)
     
     for item in to_process:
         ### strips outer markdown syntax
-        item = item[2:-1]
+        item = item[1:-1]
         ### strips inner markdown syntax
         anc, src = item.split("](")
         
