@@ -39,6 +39,22 @@ def get_header_text(block):
     parts = block.split(" ", 1)
     return parts[1]
 
+def quote_block_to_block_nodes(block):
+    lines = block.split("\n")
+    new_text = ""
+    for i in range(0, len(lines)):
+        line = lines[i]
+        temp = line.split(" ", 1)
+        text = temp[1]
+        if i != len(lines) - 1:
+            new_text += text+"\n"
+        else:
+            new_text += text
+    
+    leaf_nodes = text_to_children(new_text)
+    block_node = ParentNode("blockquote", leaf_nodes)
+    return block_node    
+
 def list_block_to_block_nodes(block, tag):
     list_nodes = []
     lines = block.split("\n")
@@ -67,13 +83,10 @@ def block_to_block_node(block, block_type):
             leaf_nodes = text_to_children(header_content)
             return ParentNode(header_type, leaf_nodes)
         case ("code"):
-            ### misnomer it stips the string up until the first space (inclusive) from the left
             leaf_nodes = text_to_children(block)
             return ParentNode("code", leaf_nodes)
         case ("quote"):
-            text = get_header_text(block)
-            leaf_nodes = text_to_children(text)
-            return ParentNode("blockquote", leaf_nodes)
+            return quote_block_to_block_nodes(block)
         case ("unordered_list"):
             return list_block_to_block_nodes(block, "ul")
             #block_node = ParentNode("ul", list_nodes)

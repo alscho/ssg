@@ -3,7 +3,7 @@ import re
 from textnode import TextNode, TextType
 
 def extract_markdown_links(text):
-    images = []
+    links = []
     to_process = re.findall(r"[^\!]\[.*?\]\(.*?\)", text)
     
     for item in to_process:
@@ -12,8 +12,8 @@ def extract_markdown_links(text):
         ### strips inner markdown syntax
         anc, src = item.split("](")
         
-        images.append((anc, src))
-    return images
+        links.append((anc, src))
+    return links
 
 def extract_markdown_images(text):
     images = []

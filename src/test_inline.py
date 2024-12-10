@@ -67,7 +67,8 @@ class TestInline(unittest.TestCase):
             ["This is text with a [](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", [("", "https://i.imgur.com/aKaOqIh.gif")]],
             ["This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan]()", [("obi wan", "")]],
             ["This is text with a []() and ![]()", [("", "")]],
-            ["No images.", []]
+            ["No images.", []],
+            [" [Return Home](/)", [("Return Home", "/")]]
         ]
 
         for i in range(0, len(tests)):
